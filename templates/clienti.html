@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container mt-4">
+    <h2>Clienti</h2>
+
+    <!-- FORM INSERIMENTO NUOVO CLIENTE -->
+    <div class="card p-3 mb-4">
+        <form method="post" action="{{ url_for('clienti') }}">
+            <div class="row">
+                <div class="col-md-2">
+                    <label>Codice</label>
+                    <input type="text" name="codice" class="form-control">
+                </div>
+                <div class="col-md-6">
+                    <label>Nome cliente *</label>
+                    <input type="text" name="nome" required class="form-control">
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="submit" class="btn btn-primary w-100">Aggiungi</button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- LISTA CLIENTI -->
+    <div class="card p-3">
+        <h4>Elenco Clienti</h4>
+
+        <table class="table table-striped mt-3">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Codice</th>
+                    <th>Nome</th>
+                    <th style="width: 120px;">Azioni</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for c in clienti %}
+                <tr>
+                    <td>{{ c.id }}</td>
+                    <td>{{ c.codice or "" }}</td>
+                    <td>{{ c.nome }}</td>
+                    <td>
+                        <!-- BOTTONE ELIMINA -->
+                        <form method="post"
+                              action="{{ url_for('elimina_cliente', id=c.id) }}"
+                              onsubmit="return confirm('Eliminare questo cliente?');">
+                            <button class="btn btn-danger btn-sm w-100">Elimina</button>
+                        </form>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+{% endblock %}

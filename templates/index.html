@@ -1,0 +1,73 @@
+
+{% extends "base.html" %}
+{% block content %}
+<div class="row mb-4">
+  <div class="col-12">
+    <h1 class="h3 mb-3">Dashboard</h1>
+    <p class="text-muted">Panoramica veloce del magazzino e accesso rapido alle liste di carico.</p>
+  </div>
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-md-6">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title">Lista di carico</h5>
+        <p class="card-text">Scarica la checklist di carico per una data specifica (CSV, apribile in Excel).</p>
+        <form class="row g-2" method="get" action="{{ url_for('export_lista_carico') }}">
+          <div class="col-auto">
+            <input type="date" name="data" class="form-control form-control-sm">
+          </div>
+          <div class="col-auto">
+            <button type="submit" class="btn btn-sm btn-primary">Scarica lista di carico</button>
+          </div>
+        </form>
+        <small class="text-muted d-block mt-1">Se non scegli una data, usa automaticamente quella di oggi.</small>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-6">
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <h5 class="card-title">Situazione magazzino</h5>
+        <p class="card-text">Scarica la situazione completa del magazzino (tutti i prodotti) in formato CSV.</p>
+  <a href="/ordini/stampa_giorno">Stampa ordini del giorno</a>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<h2 class="h4 mb-3">Magazzino (riassunto)</h2>
+<div class="card shadow-sm">
+  <div class="card-body table-responsive">
+    <table class="table table-sm align-middle">
+      <thead>
+        <tr>
+          <th>Cod.</th>
+          <th>Prodotto</th>
+          <th>Kg/vaschetta</th>
+          <th>Giacenza finale (vaschette)</th>
+          <th>Giacenza finale (kg)</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in magazzino %}
+        <tr>
+          <td>{{ r.codice or "" }}</td>
+          <td>{{ r.nome }}</td>
+          <td>{{ '%.3f'|format(r.kg_per_vaschetta) }}</td>
+          <td>{{ '%.2f'|format(r.giacenza_finale_v) }}</td>
+          <td>{{ '%.2f'|format(r.giacenza_finale_kg) }}</td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="5" class="text-center text-muted">Nessun prodotto inserito ancora.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Dettaglio ordine{% endblock %}
+
+{% block content %}
+<h2>Dettaglio ordine {{ ordine.id }}</h2>
+
+<p>
+  <strong>Data:</strong> {{ ordine.data }}<br>
+  <strong>Cliente:</strong> {{ ordine.cliente_nome }}
+  {% if ordine.cliente_codice %}
+    <small class="text-muted">[{{ ordine.cliente_codice }}]</small>
+  {% endif %}
+</p>
+
+<table class="table table-sm table-striped">
+  <thead>
+    <tr>
+      <th>Prodotto</th>
+      <th>Codice</th>
+      <th>Kg</th>
+      <th>Vaschette</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for r in righe %}
+    <tr>
+      <td>{{ r.prodotto }}</td>
+      <td>{{ r.codice or "" }}</td>
+      <td>{{ "%.2f"|format(r.kg) }}</td>
+      <td>{{ "%.2f"|format(r.vaschette) }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<p>
+  <strong>Totale Kg:</strong> {{ "%.2f"|format(tot_kg) }}<br>
+  <strong>Totale vaschette:</strong> {{ "%.2f"|format(tot_vaschette) }}
+</p>
+
+<a href="{{ url_for('lista_ordini') }}" class="btn btn-secondary">Torna agli ordini</a>
+<a href="{{ url_for('stampa_checklist', id=ordine.id) }}" class="btn btn-success">Stampa checklist</a>
+{% endblock %}

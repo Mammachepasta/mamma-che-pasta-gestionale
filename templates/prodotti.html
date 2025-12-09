@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block content %}
+
+<div class="container mt-4">
+
+    <h2>Prodotti</h2>
+
+    <!-- FORM AGGIUNTA PRODOTTO -->
+    <form method="post" class="mb-4">
+        <div class="row">
+            <div class="col">
+                <label>Codice</label>
+                <input type="text" name="codice" class="form-control">
+            </div>
+
+            <div class="col">
+                <label>Nome *</label>
+                <input type="text" name="nome" class="form-control" required>
+            </div>
+
+            <div class="col">
+                <label>Kg per vaschetta *</label>
+                <input type="text" name="kg_per_vaschetta" class="form-control" required>
+            </div>
+
+            <div class="col">
+                <label>Giacenza iniziale (vaschette)</label>
+                <input type="text" name="giacenza_iniziale_v" class="form-control" value="0">
+            </div>
+
+            <div class="col">
+                <label>&nbsp;</label>
+                <button class="btn btn-success form-control">Aggiungi</button>
+            </div>
+        </div>
+    </form>
+
+    <!-- LISTA PRODOTTI -->
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Codice</th>
+                <th>Nome</th>
+                <th>Kg/vaschetta</th>
+                <th>Giacenza iniziale</th>
+                <th>Azione</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in prodotti %}
+            <tr>
+                <td>{{ p.codice }}</td>
+                <td>{{ p.nome }}</td>
+                <td>{{ p.kg_per_vaschetta }}</td>
+                <td>{{ p.giacenza_iniziale_vaschette }}</td>
+
+                <td>
+                    <form method="post" 
+                          action="{{ url_for('elimina_prodotto', id=p.id) }}"
+                          onsubmit="return confirm('Eliminare questo prodotto?');">
+
+                        <button class="btn btn-danger btn-sm">Elimina</button>
+
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</div>
+
+{% endblock %}

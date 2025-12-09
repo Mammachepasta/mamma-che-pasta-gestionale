@@ -1,0 +1,174 @@
+
+{% extends "base.html" %}
+{% block content %}
+<h1 class="h3 mb-3">Analisi vendite e produzione</h1>
+
+<form method="get" class="mb-3">
+  <div class="row g-2 align-items-end">
+    <div class="col-auto">
+      <label class="form-label">Periodo</label>
+      <select name="periodo" class="form-select form-select-sm" onchange="this.form.submit()">
+        <option value="oggi" {% if periodo == 'oggi' %}selected{% endif %}>Oggi</option>
+        <option value="settimana" {% if periodo == 'settimana' %}selected{% endif %}>Settimana corrente</option>
+        <option value="mese" {% if periodo == 'mese' %}selected{% endif %}>Mese corrente</option>
+        <option value="anno" {% if periodo == 'anno' %}selected{% endif %}>Anno corrente</option>
+        <option value="ultimi30" {% if periodo == 'ultimi30' %}selected{% endif %}>Ultimi 30 giorni</option>
+      </select>
+    </div>
+    <div class="col-auto">
+      <small class="text-muted">Dal {{ data_inizio.strftime('%d/%m/%Y') }} al {{ data_fine.strftime('%d/%m/%Y') }}</small>
+    </div>
+  </div>
+</form>
+
+<div class="row g-3">
+  <div class="col-lg-6">
+    <div class="card shadow-sm h-100">
+      <div class="card-body">
+        <h5 class="card-title">Top cliente</h5>
+        {% if top_cliente %}
+        <p>
+          <strong>Cliente:</strong>
+          {% if top_cliente.codice %}
+            <span class="badge text-bg-secondary">{{ top_cliente.codice }}</span>
+          {% endif %}
+          {{ top_cliente.nome }}<br>
+          <strong>Kg totali:</strong> {{ '%.2f'|format(top_cliente.kg_totali) }} kg<br>
+          {% if top_cliente.prodotto_top_id %}
+            <strong>Prodotto più acquistato:</strong>
+            {{ top_cliente.prodotto_top_id }} ({{ '%.2f'|format(top_cliente.prodotto_top_kg) }} kg)
+          {% endif %}
+        </p>
+        {% else %}
+        <p class="text-muted">Nessun dato per il periodo selezionato.</p>
+        {% endif %}
+
+        <h6 class="mt-4">Classifica clienti</h6>
+        <div class="table-responsive" style="max-height: 260px; overflow-y: auto;">
+          <table class="table table-sm align-middle">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Cliente</th>
+                <th>Kg totali</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for c in clienti %}
+              <tr>
+                <td>{{ loop.index }}</td>
+                <td>
+                  {% if c.codice %}
+                    <span class="badge text-bg-secondary">{{ c.codice }}</span>
+                  {% endif %}
+                  {{ c.nome }}
+                </td>
+                <td>{{ '%.2f'|format(c.kg_totali) }}</td>
+              </tr>
+              {% else %}
+              <tr>
+                <td colspan="3" class="text-center text-muted">Nessun cliente nel periodo.</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-6">
+    <div class="card shadow-sm h-100">
+      <div class="card-body">
+        <h5 class="card-title">Top prodotto</h5>
+        {% if top_prodotto %}
+        <p>
+          <strong>Prodotto:</strong>
+          {% if top_prodotto.codice %}
+            <span class="badge text-bg-secondary">{{ top_prodotto.codice }}</span>
+          {% endif %}
+          {{ top_prodotto.nome }}<br>
+          <strong>Kg venduti:</strong> {{ '%.2f'|format(top_prodotto.kg_totali) }} kg<br>
+          <strong>Clienti diversi:</strong> {{ top_prodotto.num_clienti }}
+        </p>
+        {% else %}
+        <p class="text-muted">Nessun dato per il periodo selezionato.</p>
+        {% endif %}
+
+        <h6 class="mt-4">Classifica prodotti</h6>
+        <div class="table-responsive" style="max-height: 260px; overflow-y: auto;">
+          <table class="table table-sm align-middle">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Prodotto</th>
+                <th>Kg venduti</th>
+                <th>Clienti</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for p in prodotti %}
+              <tr>
+                <td>{{ loop.index }}</td>
+                <td>
+                  {% if p.codice %}
+                    <span class="badge text-bg-secondary">{{ p.codice }}</span>
+                  {% endif %}
+                  {{ p.nome }}
+                </td>
+                <td>{{ '%.2f'|format(p.kg_totali) }}</td>
+                <td>{{ p.num_clienti }}</td>
+              </tr>
+              {% else %}
+              <tr>
+                <td colspan="4" class="text-center text-muted">Nessun prodotto nel periodo.</td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<h2 class="h5 mt-4 mb-2">Proiezioni produzione (basate su ultimi 30 giorni, +20% sicurezza)</h2>
+<div class="card shadow-sm">
+  <div class="card-body table-responsive">
+    <table class="table table-sm align-middle">
+      <thead>
+        <tr>
+          <th>Prodotto</th>
+          <th>Kg venduti ultimi 30 gg</th>
+          <th>Kg previsti prossimi 30 gg</th>
+          <th>Kg consigliati (+20%)</th>
+          <th>Vaschette consigliate</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in proiezioni %}
+        <tr>
+          <td>
+            {% if p.codice %}
+              <span class="badge text-bg-secondary">{{ p.codice }}</span>
+            {% endif %}
+            {{ p.nome }}
+          </td>
+          <td>{{ '%.2f'|format(p.kg_ultimi_30) }}</td>
+          <td>{{ '%.2f'|format(p.kg_previsti_30) }}</td>
+          <td>{{ '%.2f'|format(p.kg_con_sicurezza) }}</td>
+          <td>{{ '%.2f'|format(p.vaschette_con_sicurezza) }}</td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="5" class="text-center text-muted">Non ci sono ancora vendite negli ultimi 30 giorni.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+
+{% endblock %}

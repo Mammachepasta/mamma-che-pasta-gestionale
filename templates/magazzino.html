@@ -1,0 +1,54 @@
+
+{% extends "base.html" %}
+{% block content %}
+<h1 class="h3 mb-3">Magazzino</h1>
+
+<div class="card shadow-sm mb-3">
+  <div class="card-body">
+    <p class="mb-1">La giacenza è calcolata automaticamente da:</p>
+    <ul>
+      <li>Giacenza iniziale (inserita nei prodotti)</li>
+      <li>Produzioni registrate</li>
+      <li>Righe d'ordine (scarico automatico)</li>
+    </ul>
+    <a href="{{ url_for('export_magazzino') }}" class="btn btn-sm btn-outline-primary">Scarica magazzino in CSV</a>
+  </div>
+</div>
+
+<div class="card shadow-sm">
+  <div class="card-body table-responsive">
+    <table class="table table-sm align-middle">
+      <thead>
+        <tr>
+          <th>Cod.</th>
+          <th>Prodotto</th>
+          <th>Kg/vaschetta</th>
+          <th>Giacenza iniziale (v)</th>
+          <th>Prodotte (v)</th>
+          <th>Ordinate (v)</th>
+          <th>Giacenza finale (v)</th>
+          <th>Giacenza finale (kg)</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in magazzino %}
+        <tr>
+          <td>{{ r.codice or "" }}</td>
+          <td>{{ r.nome }}</td>
+          <td>{{ '%.3f'|format(r.kg_per_vaschetta) }}</td>
+          <td>{{ '%.2f'|format(r.giacenza_iniziale_v) }}</td>
+          <td>{{ '%.2f'|format(r.prodotte_v) }}</td>
+          <td>{{ '%.2f'|format(r.ordinate_v) }}</td>
+          <td>{{ '%.2f'|format(r.giacenza_finale_v) }}</td>
+          <td>{{ '%.2f'|format(r.giacenza_finale_kg) }}</td>
+        </tr>
+        {% else %}
+        <tr>
+          <td colspan="8" class="text-center text-muted">Nessun prodotto presente.</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}

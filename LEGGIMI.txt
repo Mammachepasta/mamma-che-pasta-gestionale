@@ -1,0 +1,133 @@
+
+GESTIONALE MAMMA CHE PASTA SRL - ISTRUZIONI
+
+Questo progetto contiene il gestionale personalizzato per:
+- Clienti (con codice)
+- Prodotti (con codice)
+- Ordini multi-riga per cliente
+- Produzione
+- Magazzino automatico
+- Analisi clienti/prodotti
+- Proiezioni di produzione a 30 giorni (+20% sicurezza)
+
+========================================
+1. REQUISITI
+========================================
+- Windows
+- Python 3 installato
+- Flask installato (già fatto in precedenza sul tuo PC)
+
+Se servisse reinstallare Flask:
+    py -m pip install flask
+
+========================================
+2. COME AVVIARE IL GESTIONALE MANUALMENTE
+========================================
+1) Estrai lo ZIP in una cartella, ad esempio:
+   C:\Users\stefa\OneDrive\Desktop\Gestionale_Mamma_che_Pasta_Srl
+
+2) Apri PowerShell o Prompt dei comandi.
+
+3) Vai nella cartella del gestionale:
+   cd "C:\Users\stefa\OneDrive\Desktop\Gestionale_Mamma_che_Pasta_Srl"
+
+4) Avvia l'app:
+   py app.py
+
+5) Apri il browser (Chrome) e vai su:
+   http://127.0.0.1:5000
+
+Il gestionale sarà accessibile anche da altri dispositivi nella stessa rete
+(Wi-Fi LAN) usando l'indirizzo IP del PC:
+   http://INDIRIZZO_IP_DEL_PC:5000
+
+========================================
+3. AVVIO AUTOMATICO CON WINDOWS (CONSUGLIATO)
+========================================
+
+Ho creato un file:
+   avvia_gestionale_mcp.bat
+
+che contiene i comandi per avviare automaticamente il gestionale.
+
+Per provarlo:
+- Fai doppio click su avvia_gestionale_mcp.bat
+- Si aprirà una finestra nera e partirà il server.
+- Apri il browser e vai su: http://127.0.0.1:5000
+
+Per farlo partire in automatico all'accesso di Windows:
+
+1) Premi il tasto Start e cerca:
+   "Utilità di pianificazione" (Task Scheduler)
+
+2) A destra clicca:
+   "Crea attività di base..."
+
+3) Dai un nome, ad esempio:
+   Gestionale Mamma che Pasta
+
+4) Trigger (quando avviarlo):
+   seleziona "All'accesso dell'utente"
+
+5) Azione:
+   - scegli "Avvia programma"
+   - come programma seleziona:
+     C:\Users\stefa\OneDrive\Desktop\Gestionale_Mamma_che_Pasta_Srl\avvia_gestionale_mcp.bat
+
+6) Conferma e salva.
+
+Da questo momento:
+- Quando accendi il PC e fai login su "stefa"
+- Windows lancerà automaticamente il gestionale.
+
+Tu dovrai solo aprire il browser e andare su:
+   http://127.0.0.1:5000
+
+========================================
+4. DOVE SONO I DATI
+========================================
+
+Tutti i dati (clienti, prodotti, ordini, produzione, magazzino) sono salvati in:
+   gestionale.db
+
+nella stessa cartella del progetto.
+
+Per fare un BACKUP:
+- Chiudi il gestionale (CTRL + C nella finestra nera, se aperta manualmente)
+- Copia il file:
+   gestionale.db
+- Salvalo dove vuoi (chiavetta, cartella "Backup", OneDrive, ecc.)
+
+========================================
+5. FLUSSO DI LAVORO CONSIGLIATO
+========================================
+
+A) Prima imposta:
+   - Clienti (pagina "Clienti")
+   - Prodotti (pagina "Prodotti")
+
+B) Ogni giorno:
+   - Registra PRODUZIONE (pagina "Produzione")
+   - Inserisci ORDINI (pagina "Nuovo ordine")
+     -> Un cliente per ordine, con tutte le righe prodotto
+
+C) Controlla:
+   - MAGAZZINO per vedere le giacenze
+   - ANALISI per capire:
+     * chi compra di più
+     * quali prodotti vendono di più
+     * le proiezioni di produzione per i prossimi 30 giorni (+20%)
+
+D) Esporta:
+   - Lista di carico (CSV per data) dalla dashboard
+   - Magazzino (CSV) dalla dashboard o pagina Magazzino
+
+========================================
+6. NOTE
+========================================
+Questa versione è pensata per essere una base solida e semplice.
+In futuro si possono aggiungere:
+- Login con password
+- Stampa PDF delle liste
+- Import automatico da Excel o da WhatsApp
+- Integrazione con altri sistemi (Lexoffice, ecc.)

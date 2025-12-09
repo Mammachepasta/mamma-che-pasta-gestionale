@@ -1,0 +1,83 @@
+
+{% extends "base.html" %}
+{% block content %}
+<h1 class="h3 mb-3">Produzione</h1>
+<div class="row">
+  <div class="col-md-5">
+    <div class="card shadow-sm mb-4">
+      <div class="card-body">
+        <h5 class="card-title">Registra produzione</h5>
+        <form method="post">
+          <div class="mb-3">
+            <label class="form-label">Data</label>
+            <input type="date" name="data" class="form-control">
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Prodotto</label>
+            <select name="prodotto_id" class="form-select" required>
+              <option value="">-- scegli prodotto --</option>
+              {% for p in prodotti %}
+              <option value="{{ p.id }}">
+                {% if p.codice %}[{{ p.codice }}] {% endif %}{{ p.nome }}
+              </option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Vaschette prodotte</label>
+            <input type="text" name="vaschette_prodotte" class="form-control" placeholder="Es. 50">
+          </div>
+          <button type="submit" class="btn btn-primary">Salva produzione</button>
+        </form>
+        <small class="text-muted d-block mt-2">
+          Ogni produzione aumenta automaticamente il magazzino del prodotto selezionato.
+        </small>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-7">
+    <div class="card shadow-sm">
+      <div class="card-body table-responsive">
+        <h5 class="card-title">Produzioni recenti</h5>
+        <table class="table table-sm align-middle">
+          <thead>
+            <tr>
+              <th>Data</th>
+              <th>Prodotto</th>
+              <th>Vaschette</th>
+              <th>Kg</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for r in produzione %}
+            <tr>
+              <td>{{ r.data }}</td>
+              <td>
+                {% if r.prodotto_codice %}
+                  <span class="badge text-bg-secondary">{{ r.prodotto_codice }}</span>
+                {% endif %}
+                {{ r.prodotto_nome }}
+              </td>
+              <td>{{ '%.2f'|format(r.vaschette_prodotte) }}</td>
+              <td>{{ '%.2f'|format(r.kg_prodotti) }}</td>
+              <td>
+                <form method="post" action="{{ url_for('elimina_produzione', prod_id=r.id) }}" onsubmit="return confirm('Eliminare questa produzione?');">
+                  <button type="submit" class="btn btn-sm btn-outline-danger">Elimina</button>
+                </form>
+              </td>
+            </tr>
+            {% else %}
+            <tr>
+              <td colspan="5" class="text-center text-muted">Nessuna produzione registrata.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <small class="text-muted">Questi dati vengono usati per il calcolo della giacenza di magazzino.</small>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
