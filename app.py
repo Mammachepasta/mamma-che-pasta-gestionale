@@ -888,6 +888,54 @@ def stampa_giorno():
         download_name=f"ordini_{data_str}.docx",
         mimetype="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     )
+@app.route("/statistiche")
+def statistiche():
+    conn = get_db_connection()
+    cur = conn.cursor()
+
+    # Prodotti più venduti
+    cur.execute("""
+        SELECT p.nome AS prodotto, SUM(r.qta_inserita) AS totale
+        FROM righe_ordine r
+        JOIN prodotti p ON p.id = r.prodotto_id
+        GROUP BY p.id
+        ORDER BY totale DESC
+        LIMIT 10
+    """)
+    top_prodotti = cur.fetchall()
+
+    # Clienti con il maggior numero di acquisti
+    cur.execute("""
+        SELECT c.nome AS cliente, SUM(r.qta_inserita) AS totale
+        FROM righe_ordine r
+        JOIN ordini o ON o.id = r.ordine_id
+        JOIN clienti c ON c.id = o.cliente_id
+        GROUP BY c.id
+        ORDER BY totale DESC
+        LIMIT 10
+    """)
+    top_clienti = cur.fetchall()
+
+    # Andamento mensile
+    cur.execute("""
+        SELECT strftime('%Y-%m', o.data) AS mese,
+               SUM(r.qta_inserita) AS totale
+        FROM righe_ordine r
+        JOIN ordini o ON o.id = r.ordine_id
+        GROUP BY mese
+        ORDER BY mese ASC
+    """)
+    andamento = cur.fetchall()
+
+    conn.close()
+
+    return render_template(
+        "statistiche.html",
+        top_prodotti=top_prodotti,
+        top_clienti=top_clienti,
+        andamento=andamento
+    )
+
 
 
 # ---------------------- MAIN ----------------------

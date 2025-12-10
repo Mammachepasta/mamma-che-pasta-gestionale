@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block content %}
+<h2>Statistiche Fatturato</h2>
+
+<h3>Prodotti più venduti</h3>
+<canvas id="prodottiChart"></canvas>
+
+<h3>Clienti top</h3>
+<canvas id="clientiChart"></canvas>
+
+<h3>Andamento mensile</h3>
+<canvas id="andamentoChart"></canvas>
+
+<!-- Libreria Chart.js da CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+// DATI PASSATI DA FLASK (Python) → TEMPLATE
+
+// Prodotti più venduti
+const prodottiLabels = {{ top_prodotti|map(attribute='prodotto')|list|tojson }};
+const prodottiData   = {{ top_prodotti|map(attribute='totale')|list|tojson }};
+
+// Clienti top
+const clientiLabels = {{ top_clienti|map(attribute='cliente')|list|tojson }};
+const clientiData   = {{ top_clienti|map(attribute='totale')|list|tojson }};
+
+// Andamento mensile
+const andamentoLabels = {{ andamento|map(attribute='mese')|list|tojson }};
+const andamentoData   = {{ andamento|map(attribute='totale')|list|tojson }};
+
+// GRAFICO PRODOTTI
+new Chart(
+    document.getElementById('prodottiChart'),
+    {
+        type: 'bar',
+        data: {
+            labels: prodottiLabels,
+            datasets: [{
+                label: 'Quantità totale',
+                data: prodottiData
+            }]
+        }
+    }
+);
+
+// GRAFICO CLIENTI
+new Chart(
+    document.getElementById('clientiChart'),
+    {
+        type: 'bar',
+        data: {
+            labels: clientiLabels,
+            datasets: [{
+                label: 'Quantità totale',
+                data: clientiData
+            }]
+        }
+    }
+);
+
+// GRAFICO ANDAMENTO MENSILE
+new Chart(
+    document.getElementById('andamentoChart'),
+    {
+        type: 'line',
+        data: {
+            labels: andamentoLabels,
+            datasets: [{
+                label: 'Quantità totale per mese',
+                data: andamentoData
+            }]
+        }
+    }
+);
+</script>
+{% endblock %}
